@@ -4,8 +4,8 @@ function Player:init()
     self.x = 16
     self.y = 16
 
-    self.width = 16
-    self.height = 16
+    self.width = 8
+    self.height = 8
 
     -- velocity
     self.dx = 100
@@ -19,6 +19,10 @@ function Player:update(dt)
     if love.keyboard.isDown('a') then
         self.x = self.x - self.dx * dt
     end
+end
+
+function Player:collides(object)
+    
 end
 
 function Player:render()

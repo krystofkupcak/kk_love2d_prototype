@@ -2,14 +2,14 @@ love.graphics.setDefaultFilter('nearest', 'nearest')
 push = require 'lib/push'
 Class = require 'lib/class'
 
+require 'Util'
+require 'Player'
+require 'Map'
+
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 VIRTUAL_WIDTH = 256
 VIRTUAL_HEIGHT = 144
-
-TILE_SIZE = 16
-require 'Util'
-require 'Player'
 
 gTextures = {
     ['tiles'] = love.graphics.newImage('graphics/pixelgame_design_test.png')
@@ -26,17 +26,37 @@ function love.load()
         resizable = true
     })
 
-    player = Player()
+    map = Map()
+
+    -- initialize mouse input table
+    love.mouse.buttonsPressed = {}
+end
+
+function love.keypressed(key)
+    if key == 'escape' then
+        love.event.quit()
+    end
+end
+
+function love.mousepressed(x, y, button)
+    local x_pos, y_pos = push:toGame(x, y) -- switch to game coordiantes, based by virtual resolution
+    love.mouse.buttonsPressed[button] = true
+    love.mouse.buttonsPressed['x'] = math.floor(x_pos)
+    love.mouse.buttonsPressed['y'] = math.floor(y_pos)
+end
+
+function love.mouse.wasPressed(button)
+    return love.mouse.buttonsPressed[button]
 end
 
 function love.update(dt)
-    player:update(dt)
+    map:update(dt)
+
+    love.mouse.buttonsPressed = {}
 end
 
 function love.draw()
     push:start()
-    love.graphics.draw(gTextures['tiles'], gQuads['tiles'][1], 0 , 0)
-    love.graphics.draw(gTextures['tiles'], gQuads['tiles'][2], 16 , 0)
-    player:render()
+    map:render()
     push:finish()
 end
